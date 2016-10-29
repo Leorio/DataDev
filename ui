@@ -1,0 +1,27 @@
+library(shiny)
+require(AER)
+
+# Define UI for application that draws a histogram
+shinyUI(fluidPage(
+  
+  # Application title
+  titlePanel("USCrudes data"),
+  
+  # Sidebar with a slider input for number of bins 
+  sidebarLayout(
+    sidebarPanel(
+      data(USCrudes),
+      selectInput('xcol', 'X Variable', names(USCrudes)[2:3]),
+      selectInput('type', 'Regression type', c("linear","loess","lowess","smooth-spline")),
+       sliderInput("bins",
+                   "Number of datapoints:",
+                   min = 10,
+                   max = 99,
+                   value = 99),
+      checkboxInput("checkbox", label = "Fit line", value = TRUE)
+    ),
+    
+    mainPanel(
+      plotOutput("plot1")
+    )
+  )))
