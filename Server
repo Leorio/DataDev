@@ -1,0 +1,57 @@
+library(shiny)
+USCrudes<-read.csv("USCrudes.csv",sep=" ")
+
+# Define server logic required to draw a histogram
+shinyServer(function(input, output) {
+   
+  
+  
+  output$plot1 <- renderPlot({
+    
+    x <- input$xcol
+    range<-input$bins
+    y <- USCrudes$price
+    checkbox<-input$checkbox
+    type<-input$type
+    
+    plot(USCrudes[1:range,x],USCrudes[1:range,1],xlab=x,ylab="price",main="USD oil barrel price")
+    
+    
+    if(type=="linear"){
+    
+    lmodel<-lm(USCrudes[1:range,1]~USCrudes[1:range,x])}
+    
+    else if(type=="loess"){
+     
+      loessmodel <- loess(USCrudes[1:range,1]~USCrudes[1:range,x])}
+    
+    else if(type=="lowess"){
+      lowessmodel <- lowess(USCrudes[1:range,1]~USCrudes[1:range,x])}
+    
+    else if(type=="smooth-spline"){
+      ssmodel <- smooth.spline(USCrudes[1:range,1]~USCrudes[1:range,x])}
+    
+    if(checkbox=="TRUE" && type=="linear"){
+      abline(lmodel,col="red")}
+    
+    else if(checkbox=="TRUE" && type=="loess"){
+      j <- order(USCrudes[1:range,x])
+      lines(USCrudes[1:range,x][j],predict(loessmodel)[j],col="red")
+    }
+    
+    else if(checkbox=="TRUE" && type=="lowess"){
+      lines(lowessmodel$x,lowessmodel$y,col='red')
+    }
+    
+    else if(checkbox=="TRUE" && type=="smooth-spline"){
+      lines(ssmodel$x,ssmodel$y,col='red')
+      a=3
+    }
+    
+  })
+  
+  output$text1 <- renderText({
+
+  })
+  
+})
